@@ -35,10 +35,10 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         
     }],
-    username: [{
+    username: {
         type: String,
         default: "Employee"
-    }],
+    },
     password: {
         type: String,
         required: true
@@ -48,8 +48,9 @@ const employeeSchema = new mongoose.Schema({
         default: true
     },
     empId: {
-        type: Number,
-        autoIncrement: true
+        type: String,
+        required: true
+
     }
 })
 
