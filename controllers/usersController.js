@@ -1,15 +1,12 @@
-const User=require('../models/User')
-const Notes=require('../models/Note')
+const User = require('../models/User')
+const Note = require('../models/Note')
 const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
-const Employee = require('../models/Employee')
-
 
 // @desc Get all users
 // @route GET /users
 // @access Private
-
-const getAllUsers = asyncHandler(async (_req, res) => {
+const getAllUsers = asyncHandler(async (req, res) => {
     // Get all users from MongoDB
     const users = await User.find().select('-password').lean()
 
@@ -21,12 +18,10 @@ const getAllUsers = asyncHandler(async (_req, res) => {
     res.json(users)
 })
 
-// @desc create users
+// @desc Create new user
 // @route POST /users
 // @access Private
-
-const createNewUser =asyncHandler(async(req,res)=>{
-
+const createNewUser = asyncHandler(async (req, res) => {
     const { username, password, roles } = req.body
 
     // Confirm data
@@ -54,13 +49,12 @@ const createNewUser =asyncHandler(async(req,res)=>{
     } else {
         res.status(400).json({ message: 'Invalid user data received' })
     }
-} )
+})
 
-// @descupdate users
-// @route Patch /users
+// @desc Update a user
+// @route PATCH /users
 // @access Private
-
-const updateUser =asyncHandler(async(req,res)=>{
+const updateUser = asyncHandler(async (req, res) => {
     const { id, username, roles, active, password } = req.body
 
     // Confirm data 
@@ -95,14 +89,12 @@ const updateUser =asyncHandler(async(req,res)=>{
     const updatedUser = await user.save()
 
     res.json({ message: `${updatedUser.username} updated` })
+})
 
-    
-} )
-// @desc delete users
-// @route delete/users
+// @desc Delete a user
+// @route DELETE /users
 // @access Private
-
-const deleteUser =asyncHandler(async(req,res)=>{
+const deleteUser = asyncHandler(async (req, res) => {
     const { id } = req.body
 
     // Confirm data
@@ -110,23 +102,29 @@ const deleteUser =asyncHandler(async(req,res)=>{
         return res.status(400).json({ message: 'User ID Required' })
     }
 
-  
+    // Does the user still have assigned notes?
+    const note = await Note.findOne({ user: id }).lean().exec()
+    if (note) {
+        return res.status(400).json({ message: 'User has assigned notes' })
+    }
 
     // Does the user exist to delete?
-    const emloyee = await Employee.findById(id).exec()
+    const user = await User.findById(id).exec()
 
-    if (!emloyee) {
+    if (!user) {
         return res.status(400).json({ message: 'User not found' })
     }
 
-    const result = await emloyee.deleteOne()
+    const result = await user.deleteOne()
 
     const reply = `Username ${result.username} with ID ${result._id} deleted`
 
     res.json(reply)
-    
-} )
+})
 
-
-
-module.exports={getAllUsers,createNewUser,updateUser,deleteUser}
+module.exports = {
+    getAllUsers,
+    createNewUser,
+    updateUser,
+    deleteUser
+}
