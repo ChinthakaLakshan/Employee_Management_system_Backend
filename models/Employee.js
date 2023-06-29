@@ -23,7 +23,7 @@ const employeeSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    dept: [{
+    department: [{
         type: String,
         required: true
     }],

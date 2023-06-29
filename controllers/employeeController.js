@@ -1,6 +1,6 @@
 //const User=require('../models/User')
 const Employee=require('../models/Employee')
-const asyncHandler = require('express-async-handler')
+//const asyncHandler = require('express-async-handler')
 const bcrypt = require('bcrypt')
 
 
@@ -9,7 +9,7 @@ const bcrypt = require('bcrypt')
 // @route GET /users
 // @access Private
 
-const getAllEmployees = asyncHandler(async (_req, res) => {
+/*const getAllEmployees = asyncHandler(async (_req, res) => {
     // Get all users from MongoDB
     const employee = await Employee.find().select('-password').lean()
 
@@ -19,13 +19,25 @@ const getAllEmployees = asyncHandler(async (_req, res) => {
     }
 
     res.json(employee)
-})
+})*/
+
+const getAllEmployees = async (req, res) => {
+    // Get all users from MongoDB
+    const employee = await Employee.find().select('-password').lean()
+
+    // If no users 
+    if (!employee?.length) {
+        return res.status(400).json({ message: 'No employee found' })
+    }
+
+    res.json(employee)
+}
 
 // @desc create users
 // @route POST /users
 // @access Private
 
-const createNewEmployees =asyncHandler(async(req,res)=>{
+const createNewEmployees =async(req,res)=>{
     const { username, password, roles,fname,lname,email,address,phone, dept,empId,prevexpirence} = req.body
 
     // Confirm data
@@ -34,7 +46,7 @@ const createNewEmployees =asyncHandler(async(req,res)=>{
     }
 
     // Check for duplicate username
-    const duplicate = await Employee.findOne({ username,fname,lname,email,address,phone }).lean().exec()
+    const duplicate = await Employee.findOne({ username , fname }).collation({ locale: 'en', strength: 2 }).lean().exec()
 
     if (duplicate) {
         return res.status(409).json({ message: 'Duplicate Employee' })
@@ -43,10 +55,12 @@ const createNewEmployees =asyncHandler(async(req,res)=>{
     // Hash password 
     const hashedPwd = await bcrypt.hash(password, 10) // salt rounds
 
-    const userObject = { username, "password": hashedPwd, roles,fname,lname,email,address,phone, dept ,empId,prevexpirence}
+    const employeeObject = (!Array.isArray(roles) || !roles.length)
+    ? { username, "password": hashedPwd }
+    : { username, "password": hashedPwd, roles }
 
     // Create and store new user 
-    const employee = await Employee.create(userObject)
+    const employee = await Employee.create(employeeObject)
 
     if (employee) { //created 
         res.status(201).json({ message: `New user ${fname} created` })
@@ -54,13 +68,16 @@ const createNewEmployees =asyncHandler(async(req,res)=>{
         res.status(400).json({ message: 'Invalid user data received' })
     }
    
-} )
+} 
+
+
+
 
 // @descupdate users
 // @route Patch /users
 // @access Private
 
-const updateEmployees =asyncHandler(async(req,res)=>{
+const updateEmployees =async(req,res)=>{
     const { id,username, password, roles,fname,lname,email,address,phone, dept, empId} = req.body
 
     if (!username || !password || !Array.isArray(roles) || !roles.length|| !fname|| ! lname|| !email|| !address|| !phone|| !Array.isArray(dept)|| ! dept.length||!empId) {
@@ -74,7 +91,7 @@ const updateEmployees =asyncHandler(async(req,res)=>{
     }
 
     // Check for duplicate 
-    const duplicate = await Employee.findOne({ username }).lean().exec()
+    const duplicate = await Employee.findOne({ username , fname }).collation({ locale: 'en', strength: 2 }).lean().exec()
 
     // Allow updates to the original user 
     if (duplicate && duplicate?._id.toString() !== id) {
@@ -103,12 +120,12 @@ const updateEmployees =asyncHandler(async(req,res)=>{
 
     res.json({ message: `${updatedEmployee.username} updated` })
     
-} )
+} 
 // @desc delete users
 // @route delete/users
 // @access Private
 
-const deleteEmployees =asyncHandler(async(req,res)=>{
+const deleteEmployees =async(req,res)=>{
     const { id } = req.body
 
     // Confirm data
@@ -131,7 +148,7 @@ const deleteEmployees =asyncHandler(async(req,res)=>{
 
     res.json(reply)
     
-} )
+} 
 
 
 
