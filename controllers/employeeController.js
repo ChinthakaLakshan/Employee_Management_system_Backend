@@ -1,25 +1,11 @@
-//const User=require('../models/User')
+
 const Employee=require('../models/Employee')
-//const asyncHandler = require('express-async-handler')
+
 const bcrypt = require('bcrypt')
 
 
 
-// @desc Get all users
-// @route GET /users
-// @access Private
 
-/*const getAllEmployees = asyncHandler(async (_req, res) => {
-    // Get all users from MongoDB
-    const employee = await Employee.find().select('-password').lean()
-
-    // If no users 
-    if (!employee?.length) {
-        return res.status(400).json({ message: 'No users found' })
-    }
-
-    res.json(employee)
-})*/
 
 const getAllEmployees = async (req, res) => {
     // Get all users from MongoDB
@@ -38,11 +24,11 @@ const getAllEmployees = async (req, res) => {
 // @access Private
 
 const createNewEmployees =async(req,res)=>{
-    const { username, password, roles,fname,lname,email,address,phone, dept,empId,prevexpirence} = req.body
+    const { username, password, roles,fname,lname,email,address,phone, department,empId,prevexpirence} = req.body
 
     // Confirm data
-    if (!username || !password || !Array.isArray(roles) || !roles.length|| !fname|| ! lname|| !email|| !address|| !phone|| !Array.isArray(dept)|| ! dept.length||!empId) {
-        return res.status(400).json({ message: 'All fields are required' })
+    if (!username || !password/* || !Array.isArray(roles) || !roles.length|| !fname|| ! lname|| !email|| !address|| !phone|| !Array.isArray(department)|| ! department.length||!empId*/) {
+        return res.status(400).json({ message: 'All fields are required123' })
     }
 
     // Check for duplicate username
@@ -78,9 +64,9 @@ const createNewEmployees =async(req,res)=>{
 // @access Private
 
 const updateEmployees =async(req,res)=>{
-    const { id,username, password, roles,fname,lname,email,address,phone, dept, empId} = req.body
+    const { id,username, password, roles,/*fname,lname,email,address,phone, , empId,*/ department} = req.body
 
-    if (!username || !password || !Array.isArray(roles) || !roles.length|| !fname|| ! lname|| !email|| !address|| !phone|| !Array.isArray(dept)|| ! dept.length||!empId) {
+    if (!username || !password || !Array.isArray(roles) || !roles.length||/* !fname|| ! lname|| !email|| !address|| !phone||*/ !Array.isArray(department)|| ! department.length/*||!empId*/) {
         return res.status(400).json({ message: 'All fields are required' })
     }
 
@@ -101,12 +87,12 @@ const updateEmployees =async(req,res)=>{
     employee.username = username
     employee.roles = roles
    // employee.active = active
-   employee.fname = fname
+  /* employee.fname = fname
    employee.username = username
    employee.lname = lname
    employee.address = address
    employee.phone = phone
-   employee.dept = dept
+   employee.department = department*/
    
 
 
@@ -136,9 +122,9 @@ const deleteEmployees =async(req,res)=>{
   
 
     // Does the user exist to delete?
-    const emloyee = await Employee.findById(id).exec()
+    const employee = await Employee.findById(id).exec()
 
-    if (!emloyee) {
+    if (!employee) {
         return res.status(400).json({ message: 'User not found' })
     }
 

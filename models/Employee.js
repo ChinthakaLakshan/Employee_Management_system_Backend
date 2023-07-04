@@ -25,7 +25,7 @@ const employeeSchema = new mongoose.Schema({
     },
     department: [{
         type: String,
-        required: true
+        //required: true
     }],
     roles: [{
         type: String,
@@ -37,7 +37,7 @@ const employeeSchema = new mongoose.Schema({
     }],
     username: {
         type: String,
-        default: "Employee"
+        
     },
     password: {
         type: String,
