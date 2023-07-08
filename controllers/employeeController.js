@@ -24,26 +24,24 @@ const getAllEmployees = async (req, res) => {
 // @access Private
 
 const createNewEmployees =async(req,res)=>{
-    const { username, password, roles,fname,lname,email,address,phone, department,empId,prevexpirence} = req.body
+    const {  roles,fname,lname,email,address,phone, department,empId,prevexpirence} = req.body
 
     // Confirm data
-    if (!username || !password/* || !Array.isArray(roles) || !roles.length|| !fname|| ! lname|| !email|| !address|| !phone|| !Array.isArray(department)|| ! department.length||!empId*/) {
+  /*  if (  !Array.isArray(roles) || !roles.length|| !fname|| ! lname|| !email|| !address|| !phone|| !Array.isArray(department)|| ! department.length||!empId) {
         return res.status(400).json({ message: 'All fields are required123' })
-    }
+    }*/
 
     // Check for duplicate username
-    const duplicate = await Employee.findOne({ username , fname }).collation({ locale: 'en', strength: 2 }).lean().exec()
+    const duplicate = await Employee.findOne({  fname , lname, empId }).collation({ locale: 'en', strength: 2 }).lean().exec()
 
     if (duplicate) {
         return res.status(409).json({ message: 'Duplicate Employee' })
     }
 
-    // Hash password 
-    const hashedPwd = await bcrypt.hash(password, 10) // salt rounds
+   
 
-    const employeeObject = (!Array.isArray(roles) || !roles.length)
-    ? { username, "password": hashedPwd }
-    : { username, "password": hashedPwd, roles }
+    const employeeObject = {roles,fname,lname,email,address,phone, department,empId,prevexpirence}
+  
 
     // Create and store new user 
     const employee = await Employee.create(employeeObject)
@@ -64,10 +62,10 @@ const createNewEmployees =async(req,res)=>{
 // @access Private
 
 const updateEmployees =async(req,res)=>{
-    const { id,username, password, roles,/*fname,lname,email,address,phone, , empId,*/ department} = req.body
+    const { id, roles,fname,lname,email,address,phone,  empId,department} = req.body
 
-    if (!username || !password || !Array.isArray(roles) || !roles.length||/* !fname|| ! lname|| !email|| !address|| !phone||*/ !Array.isArray(department)|| ! department.length/*||!empId*/) {
-        return res.status(400).json({ message: 'All fields are required' })
+    if ( !Array.isArray(roles) || !roles.length||/* !fname|| ! lname|| !email|| !address|| !phone||*/ !Array.isArray(department)|| ! department.length/*||!empId*/) {
+        return res.status(400).json({ message: 'All fields are required update' })
     }
 
     const employee = await Employee.findById(id).exec()
@@ -77,18 +75,19 @@ const updateEmployees =async(req,res)=>{
     }
 
     // Check for duplicate 
-    const duplicate = await Employee.findOne({ username , fname }).collation({ locale: 'en', strength: 2 }).lean().exec()
+    const duplicate = await Employee.findOne({  fname ,empId }).collation({ locale: 'en', strength: 2 }).lean().exec()
 
     // Allow updates to the original user 
     if (duplicate && duplicate?._id.toString() !== id) {
         return res.status(409).json({ message: 'Duplicate username' })
     }
 
-    employee.username = username
+    
     employee.roles = roles
+    employee.email=email
    // employee.active = active
   /* employee.fname = fname
-   employee.username = username
+  
    employee.lname = lname
    employee.address = address
    employee.phone = phone
@@ -96,15 +95,9 @@ const updateEmployees =async(req,res)=>{
    
 
 
-
-    if (password) {
-        // Hash password 
-         employee.password = await bcrypt.hash(password, 10) // salt rounds 
-    }
-
     const updatedEmployee = await employee.save()
 
-    res.json({ message: `${updatedEmployee.username} updated` })
+    res.json({ message: `${updatedEmployee.fname} updated` })
     
 } 
 // @desc delete users
@@ -128,9 +121,9 @@ const deleteEmployees =async(req,res)=>{
         return res.status(400).json({ message: 'User not found' })
     }
 
-    const result = await emloyee.deleteOne()
+    const result = await employee.deleteOne()
 
-    const reply = `Username ${result.username} with ID ${result._id} deleted`
+    const reply = `Username ${result.fname} with ID ${result._id} deleted`
 
     res.json(reply)
     

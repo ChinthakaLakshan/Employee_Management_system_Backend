@@ -35,14 +35,14 @@ const employeeSchema = new mongoose.Schema({
         type: String,
         
     }],
-    username: {
+    /*username: {
         type: String,
         
     },
     password: {
         type: String,
         required: true
-    },
+    },*/
     active: {
         type: Boolean,
         default: true

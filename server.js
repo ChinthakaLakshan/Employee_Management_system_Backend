@@ -33,6 +33,8 @@ app.use('/employee', require('./routes/employeeRoutes'))
 app.use('/auth', require('./routes/authRoutes'))
 app.use('/notes', require('./routes/noteRoutes'))
 
+app.use('/attendance', require('./routes/employeeAttendanceRoute'))
+
 app.all('*', (req, res) => {
     res.status(404)
     if (req.accepts('html')) {
