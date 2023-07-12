@@ -11,9 +11,9 @@ router.route('/')
     .get(attendanceController.getAllAttendances)
     .post(attendanceController.addAttendance);
 
-router.route('/:id')
+router.route('/')
     //.get(attendanceController.getAttendanceById)
     .patch(attendanceController.updateAttendance)
-    
+    .delete(attendanceController.deleteAttendance)
 
 module.exports = router;

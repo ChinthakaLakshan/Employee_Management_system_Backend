@@ -1,13 +1,14 @@
 const mongoose = require('mongoose')
 const validator=require('validator')
+const Employee = require('./Employee')
 
 const employeeAttendanceSchema = new mongoose.Schema({
 
 empId:{
  
    type: String,
-    
-    required: true
+  
+     required: true
   },
   date: {
     type: Date,
@@ -20,7 +21,11 @@ empId:{
   timeOut: {
     type: Date,
     required: true
-}
+} ,
+/* fname: {
+  type: Date,
+  required: true
+} */
 
 })
 
