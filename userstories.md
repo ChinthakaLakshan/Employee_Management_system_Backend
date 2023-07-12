@@ -1,6 +1,6 @@
 [*]  Shall be able to Create, edit, and delete employee records
 [*]  Shall be able to View employee profiles, including personal information and salary information
-[]  Shall be able to Track employee attendance and timesheets.
+[*]  Shall be able to Track employee attendance and timesheets.
 []  Shall be able to Generate reports on employee performance and productivity.
 []  Shall be able to allow employees to request and track leave.
 []  Shall be able to approve or deny leave requests.
