@@ -9,10 +9,7 @@ const attendanceController = require('../controllers/attendanceController');
 
 router.route('/')
     .get(attendanceController.getAllAttendances)
-    .post(attendanceController.addAttendance);
-
-router.route('/')
-    //.get(attendanceController.getAttendanceById)
+    .post(attendanceController.addAttendance)
     .patch(attendanceController.updateAttendance)
     .delete(attendanceController.deleteAttendance)
 

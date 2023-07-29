@@ -52,6 +52,11 @@ const employeeSchema = new mongoose.Schema({
         required: true
 
     }
-})
+    ,
+    assignedTasks: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Task',
+      }],
+});
 
 module.exports = mongoose.model('Employee', employeeSchema)

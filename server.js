@@ -34,6 +34,9 @@ app.use('/auth', require('./routes/authRoutes'))
 app.use('/notes', require('./routes/noteRoutes'))
 
 app.use('/attendance', require('./routes/employeeAttendanceRoute'))
+app.use('/task', require('./routes/taskRoutes'))
+
+app.use('/leave', require ('./routes/leaveRoutes')) 
 
 app.all('*', (req, res) => {
     res.status(404)
