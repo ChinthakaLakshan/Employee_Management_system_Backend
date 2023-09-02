@@ -2,14 +2,12 @@ const User = require('../models/User')
 const Note = require('../models/Note')
 const bcrypt = require('bcrypt')
 
-// @desc Get all users
-// @route GET /users
-// @access Private
+
 const getAllUsers = async (req, res) => {
-    // Get all users from MongoDB
+    
     const users = await User.find().select('-password').lean()
 
-    // If no users 
+   
     if (!users?.length) {
         return res.status(400).json({ message: 'No users found' })
     }
@@ -17,25 +15,23 @@ const getAllUsers = async (req, res) => {
     res.json(users)
 }
 
-// @desc Create new user
-// @route POST /users
-// @access Private
+
 const createNewUser = async (req, res) => {
     const { username, password, roles } = req.body
 
-    // Confirm data
+    
     if (!username || !password) {
         return res.status(400).json({ message: 'All fields are required' })
     }
 
-    // Check for duplicate username
+    
     const duplicate = await User.findOne({ username }).collation({ locale: 'en', strength: 2 }).lean().exec()
 
     if (duplicate) {
         return res.status(409).json({ message: 'Duplicate username' })
     }
 
-    // Hash password 
+   
     const hashedPwd = await bcrypt.hash(password, 10) // salt rounds
 
     const userObject = (!Array.isArray(roles) || !roles.length)
@@ -52,9 +48,7 @@ const createNewUser = async (req, res) => {
     }
 }
 
-// @desc Update a user
-// @route PATCH /users
-// @access Private
+
 const updateUser = async (req, res) => {
     const { id, username, roles, active, password } = req.body
 

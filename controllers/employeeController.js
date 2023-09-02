@@ -24,7 +24,7 @@ const getAllEmployees = async (req, res) => {
 // @access Private
 
 const createNewEmployees =async(req,res)=>{
-    const {  roles,fname,lname,email,address,phone, department,empId,prevexpirence} = req.body
+    const {  roles,fname,lname,email,address,phone, department,empId,experience} = req.body
 
     // Confirm data
   /*  if (  !Array.isArray(roles) || !roles.length|| !fname|| ! lname|| !email|| !address|| !phone|| !Array.isArray(department)|| ! department.length||!empId) {
@@ -40,7 +40,7 @@ const createNewEmployees =async(req,res)=>{
 
    
 
-    const employeeObject = {roles,fname,lname,email,address,phone, department,empId,prevexpirence}
+    const employeeObject = {roles,fname,lname,email,address,phone, department,empId,experience}
   
 
     // Create and store new user 
@@ -57,9 +57,7 @@ const createNewEmployees =async(req,res)=>{
 
 
 
-// @descupdate users
-// @route Patch /users
-// @access Private
+
 
 const updateEmployees =async(req,res)=>{
     const { id, roles,fname,lname,email,address,phone,  empId,department} = req.body

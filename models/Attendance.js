@@ -4,12 +4,11 @@ const Employee = require('./Employee')
 
 const employeeAttendanceSchema = new mongoose.Schema({
 
-empId:{
+empId:[{
  
-   type: String,
-  
-     required: true
-  },
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'User'
+  }],
   date: {
     type: Date,
     required: true

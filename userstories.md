@@ -9,13 +9,16 @@
 [*] Shall be able to Create and manage departments.
 [*] Shall be able to assign employees to departments
 
-send leave --employees
-accpt ---Manger
+send leave --employees *
+accpt ---Manger *
 add attendance ---filter
+update task
+
+
 
 employees
 view attendance (Total hours + salary + total leaves +)
-leave status
-send
+leave status *
+send * 
 view details
-view tasks (assignned employees)
+view tasks (assignned employees) *

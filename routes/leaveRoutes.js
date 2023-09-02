@@ -2,28 +2,18 @@ const express = require('express');
 const router = express.Router();
 
 const leaveController =require('../controllers/leaveController');
-
+const verifyJWT = require('../middleware/verifyJWT');
+router.use(verifyJWT);
 
 router.route('/')
 
 .get(leaveController.getAllLeaveRequests)
 .post(leaveController.createLeaveRequest)
+.patch(leaveController.updateLeave)
+.delete(leaveController.deleteLeave)
 
 
-router.route('/:id')
-.put(leaveController.acceptLeaveRequest)
-.patch(leaveController.cancelLeaveRequest)
 
-
-router.route('/:id/approve')
-.put(leaveController.approveLeaveRequest);
-
-router.route('/:id/cancel')
- .put(leaveController.cancelLeaveRequest2);
-
-
- router.put('/:id/approve', leaveController.approveLeaveRequest);
- router.put('/:id/cancel', leaveController.cancelLeaveRequest2);
 
 module.exports = router;
 

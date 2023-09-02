@@ -4,23 +4,18 @@ const User = require('../models/User');
 
 
 const getAllTasks = async (req, res) => {
-  try {
-    const tasks = await Task.find();
-    res.json(tasks);
-
-   
-  } catch (error) {
-    res.status(500).json({ message: 'Failed to get tasks' });
-  }
+const tasks = await Task.find().lean()
+res.json(tasks);
 };
+
 
 const createNewTask = async (req, res) => {
     try {
-      const { selectedEmployees, title, description } = req.body;
+      const { selectedEmployees, title, description , startDatet,timeOut } = req.body;
       
       
   
-      const taskObject = { selectedEmployees, title, description };
+      const taskObject = { selectedEmployees, title, description , startDatet,timeOut};
       const task = await Task.create(taskObject);
   
       res.status(201).json({ message: 'Task created', task });
@@ -33,15 +28,17 @@ const createNewTask = async (req, res) => {
 
   const updateTask = async (req, res) => {
     try {
-      const { id, empId, title, description, isComplete } = req.body;
+      const { id, selectedEmployees, title, description, status , startDatet,timeOut} = req.body;
       const task = await Task.findById(id);
       if (!task) {
         return res.status(404).json({ message: 'Task not found' });
       }
-      task.empId = empId;
+      task.selectedEmployees = selectedEmployees;
       task.title = title;
       task.description = description;
-      task.isComplete = isComplete;
+      task.status = status;
+      task.startDatet=startDatet;
+      task.timeOut=timeOut;
       await task.save();
       res.json({ message: 'Task updated', task });
     } catch (error) {

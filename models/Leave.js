@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const leaveSchema = new mongoose.Schema({
-  username: {
-        type: mongoose.Schema.Types.ObjectId,
-        /* required: true, */
-        ref: 'User'
+  userId: {
+        type: String
+       /*  required: true,
+        ref: 'User' */
 
       },
   leaveType: {
@@ -23,8 +23,8 @@ const leaveSchema = new mongoose.Schema({
     default : false
   },
   approvalStatus:{
-    type: String, 
-    default: "pending"
+    type: [String],
+        default: ["Pending"] 
   }
 });
 

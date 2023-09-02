@@ -3,9 +3,8 @@ const router = express.Router();
 const attendanceController = require('../controllers/attendanceController');
 
 
-//const verifyJWT = require('../middleware/verifyJWT');
-
-//router.use(verifyJWT);
+const verifyJWT = require('../middleware/verifyJWT');
+router.use(verifyJWT);
 
 router.route('/')
     .get(attendanceController.getAllAttendances)

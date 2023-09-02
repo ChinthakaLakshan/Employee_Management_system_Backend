@@ -16,9 +16,9 @@ const getAllLeaveRequests = async (req, res) => {
 
 const createLeaveRequest = async (req, res) => {
     try {
-      const {username, leaveType, startDate, endDate, reason } = req.body;
+      const {userId, leaveType, startDate, endDate, reason } = req.body;
   
-      const leaveObject = { username, leaveType, startDate, endDate, reason };
+      const leaveObject = {userId, leaveType, startDate, endDate, reason };
       const leave = await Leave.create(leaveObject);
      
       res.status(201).json({ message: 'Leave request created', leave });
@@ -27,96 +27,76 @@ const createLeaveRequest = async (req, res) => {
       res.status(500).json({ message: 'Failed to create leave request 123', error });
     }
   };
-  const acceptLeaveRequest = async (req, res) => {
-    try {
-      const { leaveId } = req.params;
-  
-      // Find the leave request by ID
-      const leaveRequest = await Leave.findById(leaveId);
-  
-      if (!leaveRequest) {
-        return res.status(404).json({ message: 'Leave request not found' });
-      }
-  
-      // Update the approvalStatus to true (accepted)
-      leaveRequest.approvalStatus = true;
-  
-      // Save the updated leave request
-      const updatedLeaveRequest = await leaveRequest.save();
-  
-      res.json({ message: 'Leave request accepted', leaveRequest: updatedLeaveRequest });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to accept leave request', error });
+
+  const updateLeave = async (req, res) => {
+    const { id,  startDate,
+      endDate,
+      reason,
+      approvalStatus } = req.body
+
+    // Confirm data
+    if (!id || !approvalStatus) {
+        return res.status(400).json({ message: 'All fields are required' })
     }
-  };
-  const cancelLeaveRequest = async (req, res) => {
-    try {
-      const { leaveId } = req.params;
-  
-      // Find the leave request by ID
-      const leaveRequest = await Leave.findById(leaveId);
-  
-      if (!leaveRequest) {
-        return res.status(404).json({ message: 'Leave request not found' });
-      }
-  
-      // Delete the leave request
-      await leaveRequest.deleteOne();
-  
-      res.json({ message: 'Leave request canceled', leaveId });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to cancel leave request', error });
+
+    // Confirm note exists to update
+    const leave = await Leave.findById(id).exec()
+
+    if (!leave) {
+        return res.status(400).json({ message: 'leave not found' })
     }
-  };
 
+    // Check for duplicate title
+    const duplicate = await Leave.findOne({reason }).collation({ locale: 'en', strength: 2 }).lean().exec()
 
-  const approveLeaveRequest = async (req, res) => {
-    try {
-      const { leaveId } = req.params;
-  
-      // Find the leave request by ID
-      const leaveRequest = await Leave.findById(leaveId);
-  
-      if (!leaveRequest) {
-        return res.status(404).json({ message: 'Leave request not found' });
-      }
-  
-      // Update the approvalStatus to "approved"
-      leaveRequest.approvalStatus = 'approved';
-  
-      // Save the updated leave request
-      const updatedLeaveRequest = await leaveRequest.save();
-  
-      res.json({ message: 'Leave request approved', leaveRequest: updatedLeaveRequest });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to approve leave request', error });
+    // Allow renaming of the original note 
+    if (duplicate && duplicate?._id.toString() !== id) {
+        return res.status(409).json({ message: 'Duplicate leave title' })
     }
-  };
 
-  const cancelLeaveRequest2 = async (req, res) => {
-    try {
-      const { leaveId } = req.params;
-  
-      // Find the leave request by ID
-      const leaveRequest = await Leave.findById(leaveId);
-  
-      if (!leaveRequest) {
-        return res.status(404).json({ message: 'Leave request not found' });
-      }
-  
-      // Update the approvalStatus to "canceled"
-      leaveRequest.approvalStatus = 'canceled';
-  
-      // Save the updated leave request
-      const updatedLeaveRequest = await leaveRequest.save();
-  
-      res.json({ message: 'Leave request canceled', leaveRequest: updatedLeaveRequest });
-    } catch (error) {
-      res.status(500).json({ message: 'Failed to cancel leave request', error });
-    }
-  };
-  
+   /* leave.userId=userId */
+   leave.startDate=startDate
+   leave.endDate=endDate
+   leave.reason=reason
+   leave.approvalStatus=approvalStatus
+
+    const updatedLeave = await leave.save()
+
+    res.json(`'${updatedLeave.title}' updated`)
+}
+
+const deleteLeave = async (req, res) => {
+  const { id } = req.body
+
+  // Confirm data
+  if (!id) {
+      return res.status(400).json({ message: 'Leave ID required' })
+  }
+
+  // Confirm note exists to delete 
+  const leave = await Leave.findById(id)
+
+  if (!leave) {
+      return res.status(400).json({ message: 'Leave not found' })
+  }
+
+  const result = await leave.deleteOne()
+
+  const reply = `Leave '${result.title}' with ID ${result._id} deleted`
+
+  res.json(reply)
+}
 
 
 
-module.exports ={ getAllLeaveRequests , createLeaveRequest ,acceptLeaveRequest , cancelLeaveRequest , approveLeaveRequest , cancelLeaveRequest2};
+
+
+
+
+
+
+ 
+
+
+
+module.exports ={ getAllLeaveRequests ,updateLeave, createLeaveRequest ,deleteLeave };

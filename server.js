@@ -14,6 +14,7 @@ const connectDB = require('./config/dbConn')
 const mongoose = require('mongoose')
 const validator=require('validator')
 
+
 console.log(process.env.NODE_ENV)
 connectDB()
 

@@ -1,19 +1,28 @@
 const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema({
-  selectedEmployees: {
-        type: [String]
-        //default: ["lakshan"] 
+  selectedEmployees:[ {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+    
+   
 
        
-      },
+      }],
   title: {
     type: String,
     required: true
   },
   description: {
-    type: String,
-    required: true
+    type: String
+  },
+  startDatet: {
+    
+    
+  },
+  timeOut: {
+    type: Date,
+  
   },
   
   createdAt: {
@@ -21,8 +30,8 @@ const taskSchema = new mongoose.Schema({
     default: Date.now
   },
   status:{
-    type:Boolean,
-    default : false
+    type:[String],
+    default : ['Ongoing']
   }
 });
 
