@@ -34,22 +34,22 @@ const createLeaveRequest = async (req, res) => {
       reason,
       approvalStatus } = req.body
 
-    // Confirm data
+    
     if (!id || !approvalStatus) {
         return res.status(400).json({ message: 'All fields are required' })
     }
 
-    // Confirm note exists to update
+    
     const leave = await Leave.findById(id).exec()
 
     if (!leave) {
         return res.status(400).json({ message: 'leave not found' })
     }
 
-    // Check for duplicate title
+    
     const duplicate = await Leave.findOne({reason }).collation({ locale: 'en', strength: 2 }).lean().exec()
 
-    // Allow renaming of the original note 
+    
     if (duplicate && duplicate?._id.toString() !== id) {
         return res.status(409).json({ message: 'Duplicate leave title' })
     }
@@ -68,12 +68,12 @@ const createLeaveRequest = async (req, res) => {
 const deleteLeave = async (req, res) => {
   const { id } = req.body
 
-  // Confirm data
+  
   if (!id) {
       return res.status(400).json({ message: 'Leave ID required' })
   }
 
-  // Confirm note exists to delete 
+   
   const leave = await Leave.findById(id)
 
   if (!leave) {

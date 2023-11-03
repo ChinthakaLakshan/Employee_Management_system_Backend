@@ -28,7 +28,7 @@ const createNewTask = async (req, res) => {
 
   const updateTask = async (req, res) => {
     try {
-      const { id, selectedEmployees, title, description, status , startDatet,timeOut} = req.body;
+      const { id, selectedEmployees, title, description, status /* , startDatet */,timeOut} = req.body;
       const task = await Task.findById(id);
       if (!task) {
         return res.status(404).json({ message: 'Task not found' });
@@ -37,7 +37,7 @@ const createNewTask = async (req, res) => {
       task.title = title;
       task.description = description;
       task.status = status;
-      task.startDatet=startDatet;
+      //task.startDatet=startDatet;
       task.timeOut=timeOut;
       await task.save();
       res.json({ message: 'Task updated', task });

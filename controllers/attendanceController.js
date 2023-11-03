@@ -47,7 +47,7 @@ const mongoose = require('mongoose');
     try {
       const { id ,empId, date, timeIn, timeOut} = req.body;
 
-      // Check if attendance record exists
+      
       const attendance = await Attendance.findById(id).exec();
       if (!attendance) {
         return res.status(400).json({ message: 'Attendance record not found' });
@@ -55,7 +55,7 @@ const mongoose = require('mongoose');
 
   
 
-      // Update attendance record
+      
       attendance.empId =empId;
       attendance.date = date;
       attendance.timeIn = timeIn;
@@ -73,13 +73,13 @@ const mongoose = require('mongoose');
     try {
       const { id } = req.body;
   
-      // Check if attendance record exists
+      
       const attendance = await Attendance.findById(id);
       if (!attendance) {
         return res.status(404).json({ message: 'Attendance record not found' });
       }
   
-      // Delete attendance record
+    
       await attendance.deleteOne()
   
       res.json({ message: 'Attendance record deleted successfully' });

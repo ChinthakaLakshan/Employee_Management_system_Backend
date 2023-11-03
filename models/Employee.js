@@ -36,7 +36,7 @@ const employeeSchema = new mongoose.Schema({
     required: true
   },
   phone: {
-    type: String, // Store phone as String to preserve leading zeros, if any
+    type: String, 
     required: true,
     validate: {
       validator: isPhoneNumber,

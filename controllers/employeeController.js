@@ -8,50 +8,48 @@ const bcrypt = require('bcrypt')
 
 
 const getAllEmployees = async (req, res) => {
-    // Get all users from MongoDB
-    const employee = await Employee.find().select('-password').lean()
 
-    // If no users 
-    if (!employee?.length) {
-        return res.status(400).json({ message: 'No employee found' })
-    }
+const employee = await Employee.find().select('-password').lean()
 
-    res.json(employee)
+    
+if (!employee?.length) {
+    return res.status(400).json({ message: 'No employee found' })
 }
 
-// @desc create users
-// @route POST /users
-// @access Private
+res.json(employee)
+}
+
+
 
 const createNewEmployees =async(req,res)=>{
-    const {  roles,fname,lname,email,address,phone, department,empId,experience} = req.body
+const {  roles,fname,lname,email,address,phone, department,empId,experience} = req.body
 
-    // Confirm data
-  /*  if (  !Array.isArray(roles) || !roles.length|| !fname|| ! lname|| !email|| !address|| !phone|| !Array.isArray(department)|| ! department.length||!empId) {
-        return res.status(400).json({ message: 'All fields are required123' })
-    }*/
+// Confirm data
+/*  if (  !Array.isArray(roles) || !roles.length|| !fname|| ! lname|| !email|| !address|| !phone|| !Array.isArray(department)|| ! department.length||!empId) {
+    return res.status(400).json({ message: 'All fields are required123' })
+}*/
 
-    // Check for duplicate username
-    const duplicate = await Employee.findOne({  fname , lname, empId }).collation({ locale: 'en', strength: 2 }).lean().exec()
+// Check for duplicate username
+const duplicate = await Employee.findOne({  fname , lname, empId }).collation({ locale: 'en', strength: 2 }).lean().exec()
 
-    if (duplicate) {
-        return res.status(409).json({ message: 'Duplicate Employee' })
-    }
+if (duplicate) {
+    return res.status(409).json({ message: 'Duplicate Employee' })
+}
 
-   
 
-    const employeeObject = {roles,fname,lname,email,address,phone, department,empId,experience}
-  
 
-    // Create and store new user 
-    const employee = await Employee.create(employeeObject)
+const employeeObject = {roles,fname,lname,email,address,phone, department,empId,experience}
 
-    if (employee) { //created 
-        res.status(201).json({ message: `New user ${fname} created` })
-    } else {
-        res.status(400).json({ message: 'Invalid user data received' })
-    }
-   
+
+
+const employee = await Employee.create(employeeObject)
+
+if (employee) { //created 
+    res.status(201).json({ message: `New user ${fname} created` })
+} else {
+    res.status(400).json({ message: 'Invalid user data received' })
+}
+
 } 
 
 
@@ -60,71 +58,68 @@ const createNewEmployees =async(req,res)=>{
 
 
 const updateEmployees =async(req,res)=>{
-    const { id, roles,fname,lname,email,address,phone,  empId,department} = req.body
+const { id, roles,fname,lname,email,address,phone,  empId,department} = req.body
 
-    if ( !Array.isArray(roles) || !roles.length||/* !fname|| ! lname|| !email|| !address|| !phone||*/ !Array.isArray(department)|| ! department.length/*||!empId*/) {
-        return res.status(400).json({ message: 'All fields are required update' })
-    }
+if ( !Array.isArray(roles) || !roles.length||/* !fname|| ! lname|| !email|| !address|| !phone||*/ !Array.isArray(department)|| ! department.length/*||!empId*/) {
+    return res.status(400).json({ message: 'All fields are required update' })
+}
 
-    const employee = await Employee.findById(id).exec()
+const employee = await Employee.findById(id).exec()
 
-    if (!employee) {
-        return res.status(400).json({ message: 'User not found' })
-    }
-
-    // Check for duplicate 
-    const duplicate = await Employee.findOne({  fname ,empId }).collation({ locale: 'en', strength: 2 }).lean().exec()
-
-    // Allow updates to the original user 
-    if (duplicate && duplicate?._id.toString() !== id) {
-        return res.status(409).json({ message: 'Duplicate username' })
-    }
-
-    
-    employee.roles = roles
-    employee.email=email
-   // employee.active = active
-  /* employee.fname = fname
-  
-   employee.lname = lname
-   employee.address = address
-   employee.phone = phone
-   employee.department = department*/
-   
+if (!employee) {
+    return res.status(400).json({ message: 'User not found' })
+}
 
 
-    const updatedEmployee = await employee.save()
+const duplicate = await Employee.findOne({  fname ,empId }).collation({ locale: 'en', strength: 2 }).lean().exec()
 
-    res.json({ message: `${updatedEmployee.fname} updated` })
-    
+
+if (duplicate && duplicate?._id.toString() !== id) {
+    return res.status(409).json({ message: 'Duplicate username' })
+}
+
+
+employee.roles = roles
+employee.email=email
+// employee.active = active
+/* employee.fname = fname
+
+employee.lname = lname
+employee.address = address
+employee.phone = phone
+employee.department = department*/
+
+
+
+const updatedEmployee = await employee.save()
+
+res.json({ message: `${updatedEmployee.fname} updated` })
+
 } 
-// @desc delete users
-// @route delete/users
-// @access Private
 
 const deleteEmployees =async(req,res)=>{
-    const { id } = req.body
+const { id } = req.body
 
-    // Confirm data
-    if (!id) {
-        return res.status(400).json({ message: 'User ID Required' })
-    }
 
-  
+if (!id) {
+    return res.status(400).json({ message: 'User ID Required' })
+}
 
-    // Does the user exist to delete?
-    const employee = await Employee.findById(id).exec()
 
-    if (!employee) {
-        return res.status(400).json({ message: 'User not found' })
-    }
 
-    const result = await employee.deleteOne()
 
-    const reply = `Username ${result.fname} with ID ${result._id} deleted`
+const employee = await Employee.findById(id).exec()
 
-    res.json(reply)
-    
+if (!employee) {
+    return res.status(400).json({ message: 'User not found' })
+}
+
+const result = await employee.deleteOne()
+
+const reply = `Username ${result.fname} with ID ${result._id} deleted`
+
+res.json(reply)
+
 } 
 
 
